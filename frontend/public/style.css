@@ -1,0 +1,52 @@
+.text-primary {
+    color: #E8751A !important
+}
+
+.bg-primary {
+    background-color: #E8751A !important
+}
+
+.btn-primary {
+    background-color: #E8751A !important;
+    border-color: #E8751A !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.dropdown-item:active {
+    /*menghilangkan style default */
+    background-color: unset !important;
+    color: unset !important;
+}
+
+.img-404 {
+    width: 80%;
+}
+
+.judul-login {
+    font-size: 35px;
+}
+
+@media (min-width: 768px) {
+    .judul-login {
+        font-size: 43px;
+    }
+
+    .img-404 {
+        width: 35%;
+    }
+
+    .h-md-100 {
+        height: 100%;
+    }
+
+    .z-md-2 {
+        z-index: 2;
+    }
+}
