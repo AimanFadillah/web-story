@@ -1,4 +1,4 @@
-import { BrowserRouter, Route } from "react-router-dom"
+import { BrowserRouter, Route, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import Login from "./pages/Login"
 import Register from "./pages/Register"

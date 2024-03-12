@@ -1,28 +1,60 @@
-import { useCallback, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import DataContext from "../variabels/Context";
 import Modal from "./Modal";
 import Input from "./Input";
 import ConfigAxios from "../variabels/ConfigAxios";
+import CloseModal from "../functions/CloseModal";
 
 export default function Sidebar(props) {
+    const [show,setShow] = useState({});
     const {userFunction,bukuFunction,checkStatus} = useContext(DataContext);
+    const id = props.show == true ? useParams().id : undefined;
+    const nav = useNavigate();
 
     useEffect(() => {
         document.body.removeAttribute("style");
+        if(id != undefined){
+            getBuku();
+        }
+    },[]);
+
+    const getBuku = useCallback(async () => {
+        try{
+            setShow(await bukuFunction.show(id));
+        }catch(e){
+            alert(e);
+            nav("/");
+        }
     },[]);
 
     return (
         <>
             <header className="navbar sticky-top bg-primary p-1 shadow ">
-                <Link className="navbar text-decoration-none fw-bold me-0 px-3 fs-5 col-md-12 col-10 text-white" to="/">
+                <div className="navbar text-decoration-none fw-bold me-0 px-3 fs-5 col-md-12 col-10 text-white">
+                    {props.show ? 
                     <div>
-                        Write Story
+                        {show.nama}   
                     </div>
+                    : <div>
+                        Write Story
+                    </div>}
+                    {props.show ? 
+                    <div className="d-none d-md-flex gap-4 ">
+                        <i  className="bi bi-pencil"></i>
+                        <i onClick={async (e) => {
+                            if(confirm("Yakin ingin menghapus buku ini?")){
+                                await bukuFunction.destroy(id);
+                                nav("/")
+                            }
+                        }} className="bi bi-trash"></i>
+                    </div>
+                    :
                     <div className="d-none d-md-flex gap-4 ">
                         <i className="bi bi-search"></i>
                     </div>
-                </Link>
+                    }
+                </div>
                 <ul className="navbar-nav d-md-none">
                     <li className="nav-item text-nowrap">
                         <button
@@ -62,8 +94,18 @@ export default function Sidebar(props) {
                             
                             <div className="offcanvas-body d-md-flex p-0 pt-lg-3 overflow-y-auto">
                                 <ul className="nav d-block" style={{ height:window.innerHeight - 70,overflowY:"scroll" }} >
-                                    {[1,1].map(() => 
-                                    <li className="nav-item my-2">
+                                    <li className="nav-item my-2 d-flex align-items-center justify-content-between px-3">
+                                        <div className="text-light">
+                                            Bagian
+                                        </div>
+                                        <div className="text-light">
+                                            <div className="pointer">
+                                                <i className="bi bi-plus-lg"></i>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {[1,1].map((data,index) => 
+                                    <li key={index} className="nav-item my-2">
                                         <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
                                             <i className="bi bi-card-text"></i> 
                                             <div className="text-truncate">
@@ -132,7 +174,7 @@ export default function Sidebar(props) {
                     <Modal target={"createBuku"} >
                         <form onSubmit={async (e) => {
                             await bukuFunction.store(e)
-                            document.querySelector("#closeModal").click()
+                            CloseModal("#createBuku")
                         }} >
                         <h2 className="text-center text-primary fw-bold " >Buat Buku </h2>
                             <div className="mb-3">
@@ -141,8 +183,6 @@ export default function Sidebar(props) {
                             <button className="text-center btn btn-primary mt-2 shadow w-100" >Buat ✨</button>
                         </form>
                     </Modal>
-
-                    <button className="d-none" id="closeModal" data-bs-dismiss="modal" data-bs-target="#createBuku"></button>
 
                     <main className={`col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-3 ${props.className}`}>
                         {props.children}

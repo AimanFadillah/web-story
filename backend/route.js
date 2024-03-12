@@ -16,6 +16,8 @@ RouteGroup(Route,Auth,(route) => {
 
     route.get("/api/buku",BukuController.get);
     route.post("/api/buku",BukuController.store);
+    route.get("/api/buku/:id",BukuController.show);
+    route.delete("/api/buku/:id",BukuController.destroy);
 })
 
 module.exports = Route;
