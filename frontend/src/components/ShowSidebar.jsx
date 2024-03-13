@@ -8,6 +8,8 @@ import Page404 from "../pages/404";
 
 export default function ShowSidebar(props) {
     const [show,setShow] = useState({bagians:[]});
+    const [bagian,setBagian] = useState({});
+    const [showBagian,setShowBagian] = useState({});
     const {bagianFunction,bukuFunction} = useContext(DataContext);
     const id = useParams().id;
     const nav = useNavigate();
@@ -19,6 +21,10 @@ export default function ShowSidebar(props) {
 
     const getBuku = useCallback(async () => {
         setShow(await bukuFunction.show(id));
+    },[]);
+
+    const getBagian = useCallback(async (id) => {
+        setShowBagian(await bagianFunction.show(id));
     },[]);
 
     return show != null ? <>
@@ -87,12 +93,23 @@ export default function ShowSidebar(props) {
                                     </li>
                                     {show.bagians.map((bagian,index) => 
                                     <li key={index} className="nav-item my-2">
-                                        <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
-                                            <i className="bi bi-card-text"></i> 
-                                            <div className="text-truncate">
-                                                {bagian.nama}
+                                        <div  className={`nav-link d-flex justify-content-between text-light `} aria-current="page" to="/">
+                                            <div onClick={() => getBagian(bagian.id)} className="w-100 pointer d-flex align-items-center gap-2">
+                                                <i className="bi bi-card-text"></i> 
+                                                <div className="text-truncate">
+                                                    {bagian.nama}
+                                                </div>
                                             </div>
-                                        </Link>
+                                            <div className="d-flex gap-2">
+                                                <i onClick={() => setBagian(bagian)} data-bs-toggle="modal" data-bs-target="#editBagian" className="bi bi-pencil-square"></i>
+                                                <i onClick={async () => {
+                                                    if(confirm("Yakin ingin menghapus bagian ini")){
+                                                        await bagianFunction.destroy(bagian.id)
+                                                        getBuku();
+                                                    }
+                                                }} className="bi bi-trash"></i>
+                                            </div>
+                                        </div>
                                     </li>
                                     )}
                                 </ul>
@@ -129,9 +146,28 @@ export default function ShowSidebar(props) {
                         </form>
                     </Modal>
 
+                    <Modal target={"editBagian"} >
+                        <form onSubmit={async (e) => {
+                            await bagianFunction.update(e,bagian.id)
+                            CloseModal("#editBagian")
+                            getBuku()
+                            if(showBagian.id === bagian.id){
+                                getBagian(bagian.id)
+                            }
+                        }} >
+                        <h2 className="text-center text-primary fw-bold " >Edit Bagian</h2>
+                            <div className="mb-3">
+                                <Input type="text" value={bagian.nama} required={true} name="nama" />
+                            </div>
+                            <button className="text-center btn btn-primary mt-2 shadow w-100" >Tambah ✨</button>
+                        </form>
+                    </Modal>
+
                     <main className={`col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-3 ${props.className}`}>
-                        {props.children}
+                        <h1>{showBagian.nama}</h1>    
                     </main>
+
+
                 </div>
             </div>
         </> : <Page404/>

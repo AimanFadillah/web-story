@@ -15,6 +15,7 @@ import BagianFunction from "./functions/BagianFunction.js";
 export default function App () {
   const [user,setUser] = useState();
   const [buku,setBuku] = useState([]);
+  const [bagian,setBagian] = useState({});
   const userFunction = new UserFunction(user,setUser);
   const bukuFunction = new BukuFunction(buku,setBuku,userFunction.checkStatus);
   const bagianFunction = new BagianFunction(userFunction.checkStatus);

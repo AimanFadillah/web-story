@@ -22,6 +22,7 @@ RouteGroup(Route,Auth,(route) => {
     route.delete("/api/buku/:id",BukuController.destroy);
 
     route.post("/api/bagian",BagianController.store);
+    route.get("/api/bagian/:id",BagianController.show);
     route.put("/api/bagian/:id",BagianController.update);
     route.delete("/api/bagian/:id",BagianController.destroy);
 })
