@@ -4,6 +4,7 @@ const UserController = require("./Controllers/UserController.js");
 const RouteGroup = require("./Functions/routeGroup.js");
 const Auth = require("./Middleware/AuthMiddleware.js");
 const BukuController = require("./Controllers/BukuController.js");
+const BagianController = require("./Controllers/BagianController.js");
 
 const Route = express.Router();
 
@@ -19,6 +20,10 @@ RouteGroup(Route,Auth,(route) => {
     route.get("/api/buku/:id",BukuController.show);
     route.put("/api/buku/:id",BukuController.update);
     route.delete("/api/buku/:id",BukuController.destroy);
+
+    route.post("/api/bagian",BagianController.store);
+    route.put("/api/bagian/:id",BagianController.update);
+    route.delete("/api/bagian/:id",BagianController.destroy);
 })
 
 module.exports = Route;

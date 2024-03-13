@@ -10,18 +10,21 @@ import UserFunction from "./functions/UserFuntion.js";
 import Utama from "./pages/Utama.jsx";
 import BukuFunction from "./functions/BukuFunction.js";
 import ShowBuku from "./pages/buku/showBuku.jsx";
+import BagianFunction from "./functions/BagianFunction.js";
 
 export default function App () {
   const [user,setUser] = useState();
   const [buku,setBuku] = useState([]);
   const userFunction = new UserFunction(user,setUser);
   const bukuFunction = new BukuFunction(buku,setBuku,userFunction.checkStatus);
+  const bagianFunction = new BagianFunction(userFunction.checkStatus);
 
   const globalVariabel = {
     user,
     setUser,
     userFunction,
     bukuFunction,
+    bagianFunction,
     checkStatus:userFunction.checkStatus,
   }
 

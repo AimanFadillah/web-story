@@ -3,13 +3,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DataContext from "../variabels/Context";
 import Modal from "./Modal";
 import Input from "./Input";
-import ConfigAxios from "../variabels/ConfigAxios";
 import CloseModal from "../functions/CloseModal";
 import Page404 from "../pages/404";
 
 export default function ShowSidebar(props) {
-    const [show,setShow] = useState({});
-    const {userFunction,bukuFunction,checkStatus} = useContext(DataContext);
+    const [show,setShow] = useState({bagians:[]});
+    const {bagianFunction,bukuFunction} = useContext(DataContext);
     const id = useParams().id;
     const nav = useNavigate();
 
@@ -75,23 +74,23 @@ export default function ShowSidebar(props) {
                             </div>
                             
                             <div className="offcanvas-body d-md-flex p-0 pt-lg-3 overflow-y-auto">
-                                <ul className="nav d-block" style={{ height:window.innerHeight - 70,overflowY:"scroll" }} >
+                                <ul className="nav w-100 d-block" style={{ height:window.innerHeight - 70,overflowY:"scroll" }} >
                                     <li className="nav-item my-2 d-flex align-items-center justify-content-between px-3">
                                         <div className="text-light">
                                             Bagian
                                         </div>
                                         <div className="text-light">
-                                            <div className="pointer">
+                                            <div className="pointer" data-bs-toggle="modal" data-bs-target="#tambahBagian" >
                                                 <i className="bi bi-plus-lg"></i>
                                             </div>
                                         </div>
                                     </li>
-                                    {[1,1].map((data,index) => 
+                                    {show.bagians.map((bagian,index) => 
                                     <li key={index} className="nav-item my-2">
                                         <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
                                             <i className="bi bi-card-text"></i> 
                                             <div className="text-truncate">
-                                                Maling kundang adasdasd
+                                                {bagian.nama}
                                             </div>
                                         </Link>
                                     </li>
@@ -113,6 +112,20 @@ export default function ShowSidebar(props) {
                                 <Input type="text" required={true} value={show.nama} name="nama" />
                             </div>
                             <button className="text-center btn btn-primary mt-2 shadow w-100" >Buat ✨</button>
+                        </form>
+                    </Modal>
+
+                    <Modal target={"tambahBagian"} >
+                        <form onSubmit={async (e) => {
+                            await bagianFunction.store(e,show.id)
+                            CloseModal("#tambahBagian")
+                            getBuku()
+                        }} >
+                        <h2 className="text-center text-primary fw-bold " >Tambah Bagian</h2>
+                            <div className="mb-3">
+                                <Input type="text" required={true} name="nama" />
+                            </div>
+                            <button className="text-center btn btn-primary mt-2 shadow w-100" >Tambah ✨</button>
                         </form>
                     </Modal>
 

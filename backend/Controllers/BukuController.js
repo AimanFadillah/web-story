@@ -1,7 +1,8 @@
 const { body } = require("express-validator");
-const { pesanSuccess, pesanError } = require("../Functions/pesan");
+const { pesanSuccess } = require("../Functions/pesan");
 const Buku = require("../Models/Buku");
 const checkValidate = require("../Functions/checkValidate");
+const Bagian = require("../Models/Bagian");
 
 const BukuController = {
     get: async function (req, res) {
@@ -15,7 +16,7 @@ const BukuController = {
     show: async function (req, res) {
         try {
             const id = req.params.id;
-            const data = await Buku.findOne({ where: { id } });
+            const data = await Buku.findOne({ where: { id }, include: Bagian });
             return pesanSuccess(res, data);
         } catch (e) {
             return res.json(e);
@@ -29,6 +30,7 @@ const BukuController = {
                 const body = req.body;
                 body.user_id = req.user.id;
                 const data = await Buku.create(body);
+                await Bagian.create({ nama: "Prolog", buku_id: data.id });
                 return pesanSuccess(res, data);
             } catch (e) {
                 return res.json(e);
