@@ -22,7 +22,7 @@ export default class BukuFunction {
             const response = await ConfigAxios.get(`/api/buku/${id}`);
             return response.data.data;
         } catch (e) {
-            throw new Error("Buku tidak ada");
+            this.checkStatus(e);
         }
     }
 
@@ -32,6 +32,15 @@ export default class BukuFunction {
             const response = await ConfigAxios.post("/api/buku", new FormData(e.target));
             this.setBuku([response.data.data, ...this.buku]);
             e.target.reset()
+        } catch (e) {
+            this.checkStatus(e);
+        }
+    }
+
+    async update(e, id) {
+        try {
+            e.preventDefault();
+            const response = await ConfigAxios.put(`/api/buku/${id}`, new FormData(e.target));
         } catch (e) {
             this.checkStatus(e);
         }

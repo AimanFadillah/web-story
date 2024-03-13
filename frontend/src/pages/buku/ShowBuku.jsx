@@ -1,9 +1,9 @@
-import Sidebar from "../../components/Sidebar";
+import ShowSidebar from "../../components/ShowSidebar";
 
 export default function ShowBuku () {
 
-    return <Sidebar show={true} >
+    return <ShowSidebar >
         <h1>hai</h1>
-    </Sidebar>
+    </ShowSidebar>
 
 }

@@ -16,9 +16,6 @@ const BukuController = {
         try {
             const id = req.params.id;
             const data = await Buku.findOne({ where: { id } });
-            if (data == null) {
-                return pesanError(res, "Invalid");
-            }
             return pesanSuccess(res, data);
         } catch (e) {
             return res.json(e);
@@ -32,6 +29,21 @@ const BukuController = {
                 const body = req.body;
                 body.user_id = req.user.id;
                 const data = await Buku.create(body);
+                return pesanSuccess(res, data);
+            } catch (e) {
+                return res.json(e);
+            }
+        }
+    ],
+    update: [
+        body("nama").notEmpty().withMessage("Nama wajib ada"),
+        checkValidate,
+        async function (req, res) {
+            try {
+                const id = req.params.id;
+                const body = req.body;
+                await Buku.update(body, { where: { id } });
+                const data = await Buku.findOne({ where: { id } });
                 return pesanSuccess(res, data);
             } catch (e) {
                 return res.json(e);

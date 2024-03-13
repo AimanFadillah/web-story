@@ -5,27 +5,37 @@ import Modal from "./Modal";
 import Input from "./Input";
 import ConfigAxios from "../variabels/ConfigAxios";
 import CloseModal from "../functions/CloseModal";
+import Page404 from "../pages/404";
 
-export default function Sidebar(props) {
+export default function ShowSidebar(props) {
     const [show,setShow] = useState({});
     const {userFunction,bukuFunction,checkStatus} = useContext(DataContext);
+    const id = useParams().id;
     const nav = useNavigate();
 
     useEffect(() => {
         document.body.removeAttribute("style");
+        getBuku();
     },[]);
 
-    
+    const getBuku = useCallback(async () => {
+        setShow(await bukuFunction.show(id));
+    },[]);
 
-    return (
-        <>
+    return show != null ? <>
             <header className="navbar sticky-top bg-primary p-1 shadow ">
                 <div className="navbar text-decoration-none fw-bold me-0 px-3 fs-5 col-md-12 col-10 text-white">
                     <div>
-                        Write Story
+                        {show.nama}   
                     </div>
                     <div className="d-none d-md-flex gap-4 ">
-                        <i className="bi bi-search"></i>
+                        <i data-bs-toggle="modal" data-bs-target="#editBuku" className="bi bi-pencil"></i>
+                        <i onClick={async (e) => {
+                            if(confirm("Yakin ingin menghapus buku ini?")){
+                                await bukuFunction.destroy(id);
+                                nav("/")
+                            }
+                        }} className="bi bi-trash"></i>
                     </div>
                 </div>
                 <ul className="navbar-nav d-md-none">
@@ -66,46 +76,41 @@ export default function Sidebar(props) {
                             
                             <div className="offcanvas-body d-md-flex p-0 pt-lg-3 overflow-y-auto">
                                 <ul className="nav d-block" style={{ height:window.innerHeight - 70,overflowY:"scroll" }} >
-                                    <li className="nav-item my-2">
-                                        <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
-                                            <i className="bi bi-search"></i>
-                                            <div className="text-truncate">
-                                                Buku-Buku
-                                            </div>
-                                        </Link>
-                                        <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
-                                            <i className="bi bi-journals"></i>
-                                            <div className="text-truncate">
-                                                Buku Saya
-                                            </div>
-                                        </Link>
-                                        <div data-bs-toggle="modal" data-bs-target="#createBuku" className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page">
-                                            <i className="bi bi-journal-plus"></i>
-                                            <div className="text-truncate">
-                                                Buat Buku
-                                            </div>
+                                    <li className="nav-item my-2 d-flex align-items-center justify-content-between px-3">
+                                        <div className="text-light">
+                                            Bagian
                                         </div>
-                                        <div className={`nav-link d-flex align-items-center gap-2 text-light pointer`} aria-current="page" onClick={() => userFunction.remove()}>
-                                            <i className="bi bi-box-arrow-left"></i>
-                                            <div className="text-truncate">
-                                                Keluar
+                                        <div className="text-light">
+                                            <div className="pointer">
+                                                <i className="bi bi-plus-lg"></i>
                                             </div>
                                         </div>
                                     </li>
+                                    {[1,1].map((data,index) => 
+                                    <li key={index} className="nav-item my-2">
+                                        <Link className={`nav-link d-flex align-items-center gap-2 text-light `} aria-current="page" to="/">
+                                            <i className="bi bi-card-text"></i> 
+                                            <div className="text-truncate">
+                                                Maling kundang adasdasd
+                                            </div>
+                                        </Link>
+                                    </li>
+                                    )}
                                 </ul>
                             </div>
 
                         </div>
                     </div>
 
-                    <Modal target={"createBuku"} >
+                    <Modal target={"editBuku"} >
                         <form onSubmit={async (e) => {
-                            await bukuFunction.store(e)
-                            CloseModal("#createBuku")
+                            await bukuFunction.update(e,id)
+                            CloseModal("#editBuku")
+                            getBuku()
                         }} >
-                        <h2 className="text-center text-primary fw-bold " >Buat Buku </h2>
+                        <h2 className="text-center text-primary fw-bold " >Edit Buku </h2>
                             <div className="mb-3">
-                                <Input type="text" required={true} name="nama" />
+                                <Input type="text" required={true} value={show.nama} name="nama" />
                             </div>
                             <button className="text-center btn btn-primary mt-2 shadow w-100" >Buat ✨</button>
                         </form>
@@ -116,6 +121,5 @@ export default function Sidebar(props) {
                     </main>
                 </div>
             </div>
-        </>
-    );
+        </> : <Page404/>
 }
